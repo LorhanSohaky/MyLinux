@@ -1,3 +1,17 @@
+# My files
+kernel/br-abnt2.map
+kernel/bzImage
+kernel/linux-5.3.2/
+kernel/busybox-1.31.0/
+kernel/distro/bin/
+kernel/distro/usr/share/
+kernel/distro/init
+kernel/distro/run-init
+*.cpio
+*.bz2
+*.xz
+
+
 # Prerequisites
 *.d
 
