@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ##
 #  Run with fakeroot eg. fakeroot ./compile_all.sh
@@ -12,7 +12,9 @@
 	mkdir -p kernel/distro/bin
 	mkdir -p kernel/distro/dev
 	mkdir -p kernel/distro/usr/share/kbd/keymaps/
-	#mkdir -p kernel/distro/etc/init.d/
+	mkdir -p kernel/distro/etc/init.d/
+	mkdir -p kernel/distro/proc
+	mkdir -p kernel/distro/sys
 
 cd kernel
 
@@ -68,14 +70,6 @@ then
 	cd ../
 fi
 
-# Keyboard layout
-if [ ! -f br-abnt2.map ]
-then
-	echo 'Downloading keyboard layout'
-	wget https://kernel.googlesource.com/pub/scm/linux/kernel/git/legion/kbd/+/3a65b32e179e5b5f088fe40b162c566d4d17fb05/keymaps/i386/qwerty/br-abnt2.map
-	cp br-abnt2.map distro/usr/share/kbd/keymaps/br-abnt2.map
-fi
-
 # Configure distro
 echo 'Configuring distro'
 cd distro
@@ -86,8 +80,12 @@ then
 	mv bin/run-init .
 fi
 
-#echo '#!/bin/sh ' > etc/init.d/rcS
-#echo 'loadkmap < usr/share/kbd/keymaps/br-abnt2.map' > etc/init.d/rcS
+echo '#!/bin/sh' > etc/init.d/rcS
+echo 'mount -t proc proc proc/' >> etc/init.d/rcS
+echo 'mount --rbind /sys sys/' >> etc/init.d/rcS
+echo 'mount --rbind /dev dev/' >> etc/init.d/rcS
+chmod +x etc/init.d/rcS
+chown root etc/init.d/rcS	
 
 
 ## Configure tty
