@@ -70,6 +70,14 @@ then
 	cd ../
 fi
 
+# Download keymap
+if [ ! -f distro/usr/share/kbd/keymaps/br-abnt2.bmap ]
+then
+	echo 'Downloading Keymap'
+	wget https://dev.alpinelinux.org/bkeymaps/br/br-abnt2.bmap
+	mv br-abnt2.bmap distro/usr/share/kbd/keymaps/br-abnt2.bmap
+fi
+
 # Configure distro
 echo 'Configuring distro'
 cd distro
@@ -84,6 +92,7 @@ echo '#!/bin/sh' > etc/init.d/rcS
 echo 'mount -t proc proc proc/' >> etc/init.d/rcS
 echo 'mount --rbind /sys sys/' >> etc/init.d/rcS
 echo 'mount --rbind /dev dev/' >> etc/init.d/rcS
+echo 'loadkmap < usr/share/kbd/keymaps/br-abnt2.bmap' >> etc/init.d/rcS
 chmod +x etc/init.d/rcS
 chown root etc/init.d/rcS	
 
