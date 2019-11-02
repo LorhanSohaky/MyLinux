@@ -15,6 +15,7 @@
 	mkdir -p kernel/distro/etc/init.d/
 	mkdir -p kernel/distro/proc
 	mkdir -p kernel/distro/sys
+	mkdir -p kernel/distro/modules
 
 cd kernel
 
@@ -41,6 +42,14 @@ then
 	cp arch/x86/boot/bzImage ../
 
 	cd ../
+fi
+
+if [ ! -f modules/*.ko ]
+then
+	echo 'Compiling modules'
+	cd modules
+	make
+	cd ..
 fi
 
 
@@ -76,6 +85,13 @@ then
 	echo 'Downloading Keymap'
 	wget https://dev.alpinelinux.org/bkeymaps/br/br-abnt2.bmap
 	mv br-abnt2.bmap distro/usr/share/kbd/keymaps/br-abnt2.bmap
+fi
+
+# Copy modules
+if [ ! -f distro/modules/*.ko ]
+then
+	echo 'Copying modules'
+	cp modules/*.ko distro/modules
 fi
 
 # Configure distro
