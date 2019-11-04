@@ -1,4 +1,4 @@
-obj-m += hello.o led.o blink.o simple_led.o
+obj-m += hello.o led.o blink.o simple_led.o my_device.o
 
 PWD=$(shell pwd)
 
