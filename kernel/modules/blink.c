@@ -30,12 +30,29 @@ char status = 0;
  */
 
 static unsigned char LED[] = {0x02, 0x04, 0x01};
+/*
+ 0=right
+ 1 = left
+*/
+int direction = 0;
 
 static void my_timer_func( struct timer_list *ptr ) {
 	static int num = 0;
 	int state	   = LED[num];
 
-	num = ( num + 1 ) % 3;
+	if( direction == 0 ) {
+		num++;
+		if( num == 3 ) {
+			direction = 1;
+			num--;
+		}
+	} else {
+		num--;
+		if( num == -1 ) {
+			direction = 0;
+			num++;
+		}
+	}
 
 	( ( driver->ops )->ioctl )( vc_cons[fg_console].d->port.tty, KDSETLED, state );
 
