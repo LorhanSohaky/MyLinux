@@ -59,11 +59,9 @@ static void my_timer_func( struct timer_list *ptr ) {
 	mod_timer( &my_timer, jiffies + msecs_to_jiffies( interval ) );
 }
 
-static ssize_t
-dev_write( struct file *file, const char __user *buf, size_t count, loff_t *offset );
+static ssize_t dev_write( struct file *file, const char __user *buf, size_t count, loff_t *offset );
 
-static struct file_operations simple_driver_fops = {.owner = THIS_MODULE,
-													.write = dev_write};
+static struct file_operations simple_driver_fops = {.owner = THIS_MODULE, .write = dev_write};
 
 static int device_file_major_number = 333;
 static const char device_name[]		= "blink-led";
@@ -94,6 +92,19 @@ void unregister_device( void ) {
 	}
 }
 
+int my_init( void ) {
+	register_device();
+
+	return 0;
+}
+
+void my_exit( void ) {
+	del_timer( &my_timer );
+
+	( ( driver->ops )->ioctl )( vc_cons[fg_console].d->port.tty, KDSETLED, RESTORE_LEDS );
+	printk( KERN_DEBUG "Finalizado modulo de piscar LED\n" );
+}
+
 static ssize_t
 dev_write( struct file *file, const char __user *buf, size_t count, loff_t *offset ) {
 	size_t maxdatalen = 30, ncopied;
@@ -106,7 +117,13 @@ dev_write( struct file *file, const char __user *buf, size_t count, loff_t *offs
 
 	ncopied = copy_from_user( databuf, buf, maxdatalen );
 
-	if( ncopied == 0 ) {
+	databuf[maxdatalen] = 0;
+
+	printk( "Data from the user: %s\n", databuf );
+
+	if( databuf[0] == '0' ) {
+		my_exit();
+	} else {
 		printk( KERN_DEBUG "Iniciado modulo para piscar LED\n" );
 
 		for( i = 0; i < MAX_NR_CONSOLES; i++ ) {
@@ -116,29 +133,14 @@ dev_write( struct file *file, const char __user *buf, size_t count, loff_t *offs
 
 		driver = vc_cons[fg_console].d->port.tty->driver;
 
+		interval = databuf[1];
+
 		/* Starting the timer */
 		timer_setup( &my_timer, my_timer_func, 0 );
 		mod_timer( &my_timer, jiffies + msecs_to_jiffies( interval ) );
 	}
 
-	databuf[maxdatalen] = 0;
-
-	printk( "Data from the user: %s\n", databuf );
-
 	return count;
-}
-
-int my_init( void ) {
-	register_device();
-
-	return 0;
-}
-
-void my_exit( void ) {
-	del_timer( &my_timer );
-
-	( ( driver->ops )->ioctl )( vc_cons[fg_console].d->port.tty, KDSETLED, RESTORE_LEDS );
-	printk( KERN_DEBUG "Finalizado modulo de piscar LED\n" );
 }
 
 module_init( my_init );
