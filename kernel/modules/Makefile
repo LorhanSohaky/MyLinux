@@ -1,4 +1,4 @@
-obj-m += hello.o
+obj-m += hello.o led.o
 PWD=$(shell pwd)
 
 all:
@@ -6,4 +6,4 @@ all:
 	make -C ../linux-5.3.2 M=$(PWD) modules
 
 clean:
-	make -C ../linux-5.3.2 clean
+	make -C /lib/modules/$(shell uname -r)/build clean
