@@ -38,7 +38,7 @@ then
 	echo 'Compiling kernel'
 	cd linux-5.3.2/
 	make defconfig
-	make -j 8
+	make -j $(nproc)
 	cp arch/x86/boot/bzImage ../
 
 	cd ../
