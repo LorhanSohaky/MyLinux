@@ -5,7 +5,7 @@ This repository contains:
   - downloads and compiles Linux 5.3.2
   - compiles the modules I created
   - downloads and compiles Busybox
-  - downloads keymap to br-abnt2
+  - downloads keymap for br-abnt2 keyboard
   - configures tty
   - creates script to run at start up system (mount proc, sys, dev and use br-abnt2 as keyboard layout)
 - my kernel modules:
