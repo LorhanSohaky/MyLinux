@@ -1,10 +1,10 @@
-obj-m += hello.o led.o blink.o simple_led.o my_device.o
+obj-m += my_device_pi.o
 
 PWD=$(shell pwd)
 
 all:
 	@echo $(PWD)
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -C /home/bcc/740951/linux M=$(PWD) modules
 
 clean:
 	make -C /lib/modules/$(shell uname -r)/build clean
