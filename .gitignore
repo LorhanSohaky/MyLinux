@@ -7,6 +7,8 @@ kernel/distro/bin/
 kernel/distro/usr/share/
 kernel/distro/init
 kernel/distro/run-init
+kernel/build
+kernel/linux
 *.cpio
 *.bz2
 *.xz
