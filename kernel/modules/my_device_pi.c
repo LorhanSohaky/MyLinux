@@ -14,19 +14,20 @@
 #define DRIVER_DESC "A simple test"
 #define DRIVER_LICENSE "GPL"
 
+extern int fg_console;
+
 int interval = 100;
 
 struct timer_list my_timer;
 
-char status = 1;
-
-int led = 22;
-
+int led = 16;
 
 static void my_timer_func( struct timer_list *ptr ) {
+	static int state = 0;
 
-	 gpio_direction_output(led, status);
-	 status = !status;
+	printk( KERN_NOTICE "pisca pisca %i", state );
+	gpio_direction_output(led, state);
+	state = !state;
 
 	mod_timer( &my_timer, jiffies + msecs_to_jiffies( interval ) );
 }
@@ -75,14 +76,14 @@ int my_init( void ) {
 void my_exit( void ) {
 	del_timer( &my_timer );
 
-	gpio_free(led);
+	//gpio_free(led);
 	printk( KERN_DEBUG "Finalizado modulo de piscar LED\n" );
 }
 
 static ssize_t
 dev_write( struct file *file, const char __user *buf, size_t count, loff_t *offset ) {
 	size_t maxdatalen = 30, ncopied;
-	uint8_t databuf[30];
+	uint8_t databuf[maxdatalen];
 
 	if( count < maxdatalen ) {
 		maxdatalen = count;
